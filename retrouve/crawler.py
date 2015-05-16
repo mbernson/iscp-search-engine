@@ -5,5 +5,6 @@ if __name__ == "__main__":
     from time import sleep
 
     while True:
+        sys.argv[1]
         print(message)
         sleep(1)
