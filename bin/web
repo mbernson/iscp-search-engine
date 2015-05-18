@@ -1,1 +1,1 @@
-venv/bin/python retrouve/web/app.py
+venv/bin/python3 retrouve/web/app.py

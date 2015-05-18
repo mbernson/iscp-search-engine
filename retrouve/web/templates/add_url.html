@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Search | Submit a URL</title>
+    <link rel="stylesheet" href="/base.css" />
+</head>
+<body class="slim search">
+    <form method="post">
+        {% if added %}
+            <p><strong>Your URL from "{{ url.domain()|e }}" was added and will be indexed soon!</strong></p>
+        {% endif %}
+        <h1>Add a URL to the index</h1>
+        <input type="url" name="url" />
+        <input type="submit" />
+    </form>
+
+    <nav>
+        <ul>
+            <li><a href="/">Back home</a></li>
+        </ul>
+    </nav>
+</body>
+</html>

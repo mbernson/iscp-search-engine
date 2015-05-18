@@ -1,0 +1,12 @@
+body.slim {
+    width: 40%;
+    margin: 0 auto;
+}
+
+.search {
+    text-align: center;
+}
+
+.search ul {
+    list-style: none;
+}

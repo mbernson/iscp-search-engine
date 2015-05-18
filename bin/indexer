@@ -1,1 +1,1 @@
-venv/bin/python retrouve/indexer/indexer.py
+venv/bin/python3 retrouve/indexer/indexer.py
