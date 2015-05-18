@@ -1,5 +1,5 @@
 import sys
-sys.path.append('.') # Python packages are fucking stupid
+sys.path.append('.')  # Python packages are fucking stupid
 
 from flask import Flask, render_template, request
 from retrouve.database.url import Url

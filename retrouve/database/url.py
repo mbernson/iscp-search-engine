@@ -1,8 +1,5 @@
-import psycopg2
 from urllib.parse import urlparse
-
-class Model(object):
-    db = psycopg2.connect(database='search_engine', user='search_engine', password='search_engine')
+from retrouve.database.model import Model
 
 class Url(Model):
     def __init__(self, url):
