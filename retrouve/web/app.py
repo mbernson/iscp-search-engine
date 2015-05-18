@@ -1,7 +1,3 @@
-import sys
-
-sys.path.append('.')  # Python packages are fucking stupid
-
 from flask import Flask, render_template, request
 from retrouve.database.url import Url
 
@@ -32,7 +28,3 @@ def add_url():
         return render_template('add_url.html', added=url.insert(), url=url)
     else:
         return render_template('add_url.html', added=False)
-
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)

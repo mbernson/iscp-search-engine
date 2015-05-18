@@ -1,1 +1,9 @@
-venv/bin/python3 retrouve/web/app.py
+#!/usr/bin/env python3
+
+import sys, os
+
+sys.path.append('.')
+
+from retrouve.web.app import app
+
+app.run(host='0.0.0.0', debug=os.environ.get('APP_DEBUG'))

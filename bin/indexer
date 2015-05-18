@@ -1,1 +1,13 @@
-venv/bin/python3 retrouve/indexer/indexer.py
+#!/usr/bin/env python3
+
+import sys, os
+
+sys.path.append('.')
+
+from retrouve.indexer.indexer import Indexer
+
+print("Indexer starting")
+indexer = Indexer()
+
+while True:
+    indexer.work()

@@ -1,1 +1,13 @@
-venv/bin/python3 retrouve/spider/spider.py
+#!/usr/bin/env python3
+
+import sys, os
+
+sys.path.append('.')
+
+from retrouve.spider.spider import Spider
+
+print("Spider starting")
+spider = Spider()
+
+while True:
+    spider.work()
