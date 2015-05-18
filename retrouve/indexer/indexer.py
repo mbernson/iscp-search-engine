@@ -1,8 +1,10 @@
 import sys
+
 sys.path.append('.')  # Python packages are fucking stupid
 
 from time import sleep
 from retrouve.worker import Worker
+
 
 class Indexer(Worker):
     def work(self):

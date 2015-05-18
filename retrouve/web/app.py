@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('.')  # Python packages are fucking stupid
 
 from flask import Flask, render_template, request
@@ -6,9 +7,11 @@ from retrouve.database.url import Url
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 
+
 @app.route("/")
 def search():
     return render_template('search.html')
+
 
 @app.route("/search")
 def results():
@@ -21,6 +24,7 @@ def results():
     results = [result, result, result, result, result, result, result]
     return render_template('results.html', query=query, results=results)
 
+
 @app.route("/add_url", methods=['POST', 'GET'])
 def add_url():
     if request.method == 'POST':
@@ -28,6 +32,7 @@ def add_url():
         return render_template('add_url.html', added=url.insert(), url=url)
     else:
         return render_template('add_url.html', added=False)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

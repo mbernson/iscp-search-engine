@@ -1,6 +1,7 @@
 from urllib.parse import urlparse
 from retrouve.database.model import Model
 
+
 class Url(Model):
     def __init__(self, url):
         self.url = url

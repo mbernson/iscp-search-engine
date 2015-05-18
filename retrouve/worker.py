@@ -1,5 +1,6 @@
 from time import sleep
 
+
 class Worker:
     def start(self):
         while True:
