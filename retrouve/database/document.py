@@ -8,3 +8,12 @@ class Document(Model):
     @staticmethod
     def from_url(url):
         pass
+
+    @staticmethod
+    def from_response(response):
+        self.status = response.status_code
+        self.headers = response.headers
+        self.body = response.text
+        # self.title = response.title
+
+    def insert(self):
