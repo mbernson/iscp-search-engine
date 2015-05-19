@@ -6,6 +6,7 @@ import requests
 class Spider(Worker):
     def work(self):
         print("Spider at work")
+
         job = self.take_job_from_database('spider')
         params = job.payload
         url = Url.find(params.url_id)

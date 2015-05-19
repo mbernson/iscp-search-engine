@@ -17,3 +17,4 @@ class Document(Model):
         # self.title = response.title
 
     def insert(self):
+        pass

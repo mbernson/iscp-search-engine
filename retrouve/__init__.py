@@ -1,3 +1,3 @@
-# import sys
-# sys.path.append('.')  # Bah
-# from . import *
+import dotenv
+
+dotenv.load_dotenv('./.env')
