@@ -27,10 +27,26 @@ class Url(Model):
             return urlunparse(self.merge_with_base())
 
     def merge_with_base(self):
-        p = self.parts
-        b = self.base
-        # Please, let there be a better way to do this
-        return p.scheme or b.scheme, p.netloc or b.netloc, p.path or b.path, p.params or b.params, p.query or b.query, p.fragment or b.fragment
+        if hasattr(self, 'base'):
+            p = self.parts
+            b = self.base
+            # Please, let there be a better way to do this
+            return p.scheme or b.scheme, p.netloc or b.netloc, p.path or b.path, p.params or b.params, p.query or b.query, p.fragment or b.fragment
+        else:
+            return self.parts
+
+    @staticmethod
+    def insertmany(urls):
+        cursor = db.cursor()
+        for url in urls:
+            try:
+                url.insert_bare(cursor)
+                db.commit()
+                print("Saved url %s" % url.geturl())
+            except psycopg2.Error as e:
+                print(e)
+                db.rollback()
+        cursor.close()
 
     def insert(self):
         cursor = self.db.cursor()
@@ -47,10 +63,20 @@ class Url(Model):
             return False
 
     def insert_bare(self, cursor):
-        cursor.execute("INSERT INTO urls (url, scheme, domain, path, params, query, fragment) VALUES"
-                       "(%s, %s, %s, %s, %s, %s, %s) RETURNING id",
-                       (self.geturl(),) + self.merge_with_base())
-        self.id = cursor.fetchone()['id']
+        url = self.geturl()
+        parts = self.merge_with_base()
+
+        # Ensure this URL doesn't exist yet
+        cursor.execute("SELECT id FROM urls WHERE scheme = %s AND domain = %s AND path = %s AND params = %s AND query = %s LIMIT 1", parts[0:5])
+        if cursor.rowcount > 0:
+            return False
+
+        cursor.execute("INSERT INTO urls (url, scheme, domain, path, params, query, fragment)"
+                       "VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
+                       (url,) + parts)
+        result = cursor.fetchone()
+        self.id = result['id']
+        return True
 
     @staticmethod
     def find(url_id):
@@ -58,6 +84,7 @@ class Url(Model):
         cursor.execute("SELECT * FROM urls WHERE id = %s LIMIT 1", (url_id,))
 
         result = cursor.fetchone()
+        db.commit()
         cursor.close()
         if result is None:
             return None

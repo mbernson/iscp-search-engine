@@ -1,7 +1,9 @@
-db = {
-    'host': 'localhost',
-    'database': 'ducksearch',
-    'username': 'ducksearch',
-    'password': 'ducksearch',
-    'port': 5432,
-}
+allowed_domains = [
+    'syntaxleiden.nl',
+    'leden.syntaxleiden.nl',
+    'fotos.syntaxleiden.nl',
+
+    'metmathijs.nl',
+    'samenvatten.metmathijs.nl',
+    'koken.metmathijs.nl',
+]

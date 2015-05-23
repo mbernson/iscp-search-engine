@@ -40,18 +40,21 @@ class Jobs(Model):
         cursor = self.db.cursor()
         try:
             cursor.execute(
-                "SELECT * FROM jobs WHERE reserved = 'f' AND available_at <= NOW() AND queue = %s ORDER BY id ASC FOR UPDATE LIMIT 1",
+                "SELECT * FROM jobs WHERE "
+                "reserved = 'f' AND available_at <= NOW() AND queue = %s AND attempts <= 3 "
+                "ORDER BY id ASC FOR UPDATE LIMIT 1",
                 (queue,))
             attrs = cursor.fetchone()
             if attrs is None:
-                return False
+                raise Exception("No available jobs found. Moving on.")
             job = Job()
             job.__dict__ = attrs
             cursor.execute("UPDATE jobs SET reserved = 't', reserved_at = NOW() WHERE id = %s", (job.id,))
             self.db.commit()
+            cursor.close()
             print("reserving job with id %s" % job.id)
             return job
-        except psycopg2.Error as e:
+        except Exception as e:
             print(e)
             self.db.rollback()
             cursor.close()
@@ -62,6 +65,7 @@ class Jobs(Model):
         try:
             cursor.execute("DELETE FROM jobs WHERE id = %s", (job.id,))
             self.db.commit()
+            cursor.close()
             print("clearing job with id %s" % job.id)
             return cursor.rowcount == 1
         except psycopg2.Error as e:
@@ -73,7 +77,7 @@ class Jobs(Model):
     def release_job(self, job):
         cursor = self.db.cursor()
         try:
-            cursor.execute("UPDATE jobs SET reserved = 'f' WHERE id = %s", (job.id,))
+            cursor.execute("UPDATE jobs SET reserved = 'f', attempts = attempts + 1 WHERE id = %s", (job.id,))
             self.db.commit()
             print("releasing job with id %s" % job.id)
             return cursor.rowcount == 1

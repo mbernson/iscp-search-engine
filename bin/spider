@@ -11,6 +11,5 @@ print("Spider starting")
 spider = Spider()
 
 while True:
-    print("Starting work cycle")
     spider.work()
     sleep(1)
