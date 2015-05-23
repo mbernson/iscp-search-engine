@@ -42,7 +42,6 @@ create table documents (
     headers JSON NOT NULL,
     title TEXT NOT NULL,
     body TEXT NOT NULL,
-    content TEXT NOT NULL,
 
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -59,6 +58,7 @@ create table excerpts (
 
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 CREATE INDEX excerpts_body_fulltext_index ON excerpts USING gin(to_tsvector(language, body));
 
 create table images (

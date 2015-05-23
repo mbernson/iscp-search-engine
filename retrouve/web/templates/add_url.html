@@ -10,6 +10,8 @@
 <form method="post">
     {% if added %}
         <p><strong>Your URL from "{{ url.domain()|e }}" was added and will be indexed soon!</strong></p>
+    {% else %}
+        <p><strong>Sorry, something went wrong.</strong></p>
     {% endif %}
     <h1>Add a URL to the index</h1>
     <input type="url" name="url"/>
