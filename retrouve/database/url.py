@@ -7,18 +7,18 @@ db = get_database_connection()
 
 class Url(Model):
     def insert(self):
-        cur = self.db.cursor()
+        cursor = self.db.cursor()
         try:
             self.insert_bare(cur)
             self.db.commit()
-            self.id = cur.lastrowid
-            cur.close()
+            self.id = cursor.lastrowid
+            cursor.close()
             print("Saved url for domain %s" % self.parts.netloc)
-            return cur.rowcount == 1
+            return cursor.rowcount == 1
         except psycopg2.Error as e:
             print(e)
             self.db.rollback()
-            cur.close()
+            cursor.close()
             return False
 
     def insert_bare(self, cursor):
@@ -36,11 +36,11 @@ class Url(Model):
 
     @staticmethod
     def find(url_id):
-        cur = db.cursor()
-        cur.execute("SELECT * FROM urls WHERE id = %s LIMIT 1", (url_id,))
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM urls WHERE id = %s LIMIT 1", (url_id,))
 
-        result = cur.fetchone()
-        cur.close()
+        result = cursor.fetchone()
+        cursor.close()
         if result is None:
             return None
 
@@ -52,12 +52,12 @@ class Url(Model):
     def destroy(self):
         if self.id is None:
             return False
-        cur = self.db.cursor()
+        cursor = self.db.cursor()
         try:
-            cur.execute("DELETE FROM urls WHERE id = %s", (self.id,))
+            cursor.execute("DELETE FROM urls WHERE id = %s", (self.id,))
             self.db.commit()
-            cur.close()
-            return cur.rowcount == 1
+            cursor.close()
+            return cursor.rowcount == 1
         except psycopg2.Error as e:
             print(e)
         return False

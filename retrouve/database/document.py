@@ -18,15 +18,15 @@ class Document(Model):
         self.soup = BeautifulSoup(self.body)
 
     def insert(self):
-        cur = self.db.cursor()
+        cursor = self.db.cursor()
         attrs = self.__dict__.copy()
         attrs['url_id'] = self.url.id
         attrs['headers'] = json.dumps(dict(self.headers))
-        cur.execute("INSERT INTO documents (language, url_id, status_code, headers, title, body) VALUES "
+        cursor.execute("INSERT INTO documents (language, url_id, status_code, headers, title, body) VALUES "
                     "(%(language)s, %(url_id)s, %(status_code)s, %(headers)s, %(title)s, %(body)s)", attrs)
         self.db.commit()
-        cur.close()
-        return cur.rowcount == 1
+        cursor.close()
+        return cursor.rowcount == 1
 
     def add_urls_to_index(self):
         if self.soup is None:

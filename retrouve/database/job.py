@@ -12,62 +12,62 @@ class Job(Model):
         self.payload = args
 
     def insert(self):
-        cur = self.db.cursor()
+        cursor = self.db.cursor()
         try:
-            cur.execute("INSERT INTO jobs (queue, payload, available_at) VALUES (%(queue)s, %(payload)s, %(available_at)s)",
+            cursor.execute("INSERT INTO jobs (queue, payload, available_at) VALUES (%(queue)s, %(payload)s, %(available_at)s)",
                         self.__dict__)
             self.db.commit()
-            cur.close()
-            return cur.rowcount == 1
+            cursor.close()
+            return cursor.rowcount == 1
         except psycopg2.Error as e:
             self.db.rollback()
-            cur.close()
+            cursor.close()
             print(e)
         return False
 
 
 class Jobs(Model):
     def take_job_from_database(self, queue):
-        cur = self.db.cursor()
+        cursor = self.db.cursor()
         try:
-            cur.execute(
+            cursor.execute(
                 "SELECT * FROM jobs WHERE reserved = 'f' AND available_at <= NOW() AND queue = %s ORDER BY id ASC FOR UPDATE LIMIT 1",
                 (queue,))
-            attrs = cur.fetchone()
+            attrs = cursor.fetchone()
             job = Job()
             job.__dict__ = attrs
-            cur.execute("UPDATE jobs SET reserved = 't', reserved_at = NOW() WHERE id = %s", (job.id,))
+            cursor.execute("UPDATE jobs SET reserved = 't', reserved_at = NOW() WHERE id = %s", (job.id,))
             self.db.commit()
             print("reserving job with id %s" % job.id)
             return job
         except psycopg2.Error as e:
             print(e)
             self.db.rollback()
-            cur.close()
+            cursor.close()
         return False
 
     def clear_job(self, job):
-        cur = self.db.cursor()
+        cursor = self.db.cursor()
         try:
-            cur.execute("DELETE FROM jobs WHERE id = %s", (job.id,))
+            cursor.execute("DELETE FROM jobs WHERE id = %s", (job.id,))
             self.db.commit()
             print("clearing job with id %s" % job.id)
-            return cur.rowcount == 1
+            return cursor.rowcount == 1
         except psycopg2.Error as e:
             print(e)
             self.db.rollback()
-            cur.close()
+            cursor.close()
         return False
 
     def release_job(self, job):
-        cur = self.db.cursor()
+        cursor = self.db.cursor()
         try:
-            cur.execute("UPDATE jobs SET reserved = 'f' WHERE id = %(id)s", job.id)
+            cursor.execute("UPDATE jobs SET reserved = 'f' WHERE id = %(id)s", job.id)
             self.db.commit()
             print("releasing job with id %s" % job.id)
-            return cur.rowcount == 1
+            return cursor.rowcount == 1
         except psycopg2.Error as e:
             print(e)
             self.db.rollback()
-            cur.close()
+            cursor.close()
         return False
