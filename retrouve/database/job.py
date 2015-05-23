@@ -2,20 +2,23 @@ from datetime import datetime
 from retrouve.database.model import Model
 import psycopg2
 from datetime import datetime
+import json
+
 
 class Job(Model):
     def __init__(self, **kwargs):
-        self.available_at = datetime.now()
         super().__init__(**kwargs)
-
-    def payload(self, **args):
-        self.payload = args
+        if not hasattr(self, 'available_at'):
+            self.available_at = datetime.now()
 
     def insert(self):
         cursor = self.db.cursor()
         try:
-            cursor.execute("INSERT INTO jobs (queue, payload, available_at) VALUES (%(queue)s, %(payload)s, %(available_at)s)",
-                        self.__dict__)
+            dict = self.__dict__.copy()
+            dict['payload'] = json.dumps(self.payload)
+            cursor.execute(
+                "INSERT INTO jobs (queue, payload, available_at) VALUES (%(queue)s, %(payload)s, %(available_at)s)",
+                dict)
             self.db.commit()
             cursor.close()
             return cursor.rowcount == 1
@@ -24,6 +27,12 @@ class Job(Model):
             cursor.close()
             print(e)
         return False
+
+    def insert_bare(self, cursor):
+        cursor.execute(
+            "INSERT INTO jobs (queue, payload, available_at) VALUES (%(queue)s, %(payload)s, %(available_at)s) RETURNING id",
+            self.__dict__)
+        self.id = cursor.fetchone()['id']
 
 
 class Jobs(Model):
@@ -34,6 +43,8 @@ class Jobs(Model):
                 "SELECT * FROM jobs WHERE reserved = 'f' AND available_at <= NOW() AND queue = %s ORDER BY id ASC FOR UPDATE LIMIT 1",
                 (queue,))
             attrs = cursor.fetchone()
+            if attrs is None:
+                return False
             job = Job()
             job.__dict__ = attrs
             cursor.execute("UPDATE jobs SET reserved = 't', reserved_at = NOW() WHERE id = %s", (job.id,))
@@ -62,9 +73,22 @@ class Jobs(Model):
     def release_job(self, job):
         cursor = self.db.cursor()
         try:
-            cursor.execute("UPDATE jobs SET reserved = 'f' WHERE id = %(id)s", job.id)
+            cursor.execute("UPDATE jobs SET reserved = 'f' WHERE id = %s", (job.id,))
             self.db.commit()
             print("releasing job with id %s" % job.id)
+            return cursor.rowcount == 1
+        except psycopg2.Error as e:
+            print(e)
+            self.db.rollback()
+            cursor.close()
+        return False
+
+    def reschedule_job(self, job, crawl_at):
+        cursor = self.db.cursor()
+        try:
+            cursor.execute("UPDATE jobs SET reserved = 'f', reserved_at = null, available_at = %s WHERE id = %s", (crawl_at, job.id,))
+            self.db.commit()
+            print("rescheduling job with id %s" % job.id)
             return cursor.rowcount == 1
         except psycopg2.Error as e:
             print(e)

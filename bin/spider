@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-import sys, os
+import sys
+from time import sleep
 
 sys.path.append('.')
 
@@ -9,5 +10,7 @@ from retrouve.spider.spider import Spider
 print("Spider starting")
 spider = Spider()
 
-# while True:
-spider.work()
+while True:
+    print("Starting work cycle")
+    spider.work()
+    sleep(1)

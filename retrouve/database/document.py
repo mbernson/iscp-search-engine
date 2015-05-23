@@ -23,19 +23,27 @@ class Document(Model):
         attrs['url_id'] = self.url.id
         attrs['headers'] = json.dumps(dict(self.headers))
         cursor.execute("INSERT INTO documents (language, url_id, status_code, headers, title, body) VALUES "
-                    "(%(language)s, %(url_id)s, %(status_code)s, %(headers)s, %(title)s, %(body)s)", attrs)
+                       "(%(language)s, %(url_id)s, %(status_code)s, %(headers)s, %(title)s, %(body)s) RETURNING id", attrs)
         self.db.commit()
+        id = cursor.fetchone()['id']
         cursor.close()
-        return cursor.rowcount == 1
+        return id
 
     def add_urls_to_index(self):
         if self.soup is None:
             self.parse()
 
+        print("Detecting new URLs")
+
         cursor = self.db.cursor()
         for link in self.soup.find_all('a'):
-            url = Url.from_url(link.get('href'))
-            url.insert_bare(cursor)
+            url = Url(url=link.get('href'), base=self.url)
+
+            if url.parts.netloc == 'syntaxleiden.nl' or url.parts.netloc == '':
+                url.insert_bare(cursor)
+                print("Inserting URL: %s" % url)
+            else:
+                print("Skipping URL: %s" % url)
 
         self.db.commit()
         rows = cursor.rowcount
@@ -43,17 +51,15 @@ class Document(Model):
         cursor.close()
 
     def create_excerpts(self):
+        print("Creating excerpts")
         if self.soup is None:
             self.parse()
+
         pass
 
     def detect_language(self):
+        # Do smart things to detect the page's language here
         pass
-
-    @staticmethod
-    def from_url(url):
-        doc = Document(url=url)
-        return doc
 
     @staticmethod
     def from_response(response, url):

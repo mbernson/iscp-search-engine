@@ -8,9 +8,9 @@
 <body class="slim search">
 
 <form method="post">
-    {% if added %}
+    {% if added == True %}
         <p><strong>Your URL from "{{ url.domain()|e }}" was added and will be indexed soon!</strong></p>
-    {% else %}
+    {% elif added == False %}
         <p><strong>Sorry, something went wrong.</strong></p>
     {% endif %}
     <h1>Add a URL to the index</h1>

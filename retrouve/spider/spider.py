@@ -6,10 +6,13 @@ from retrouve.database.url import Url
 from retrouve.worker import Worker
 import requests
 from datetime import datetime, timedelta
+import urllib.robotparser
 
 
 class Spider(Worker):
     queue = 'spider'
+    repeat_delta = timedelta(days=7)
+    robot = urllib.robotparser.RobotFileParser()
 
     def __init__(self):
         self.jobs = Jobs()
@@ -17,23 +20,24 @@ class Spider(Worker):
     def work(self):
         try:
             job = self.jobs.take_job_from_database(self.queue)
+            if job is False:
+                return False
             print(job)
-            url = Url.find(job['payload']['url_id'])
+            url = Url.find(job.payload['url_id'])
 
             print("Downloading URL '%s'" % url)
-            response = requests.get(url)
+            response = requests.get(url.geturl())
             print("got response code %s" % response.status_code)
 
             doc = Document.from_response(response, url)
             doc.insert()
 
-            available_at = datetime.now() + timedelta(days=7)
-            next_job = Job(queue='spider', payload={'url_id':url.id}, available_at=available_at)
-            next_job.insert()
-            # doc.add_urls_to_index()
+            doc.add_urls_to_index()
             # doc.create_excerpts()
-            # self.jobs.clear_job(job)
-            self.jobs.release_job(job)
+
+            # Schedule the job to be repeated after some period of time
+            recrawl_at = datetime.now() + self.repeat_delta
+            self.jobs.reschedule_job(job, recrawl_at)
         except Exception as e:
             # Release the job back on to the queue if an error occurs
             self.jobs.release_job(job)

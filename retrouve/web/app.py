@@ -25,7 +25,7 @@ def results():
 @app.route("/add_url", methods=['POST', 'GET'])
 def add_url():
     if request.method == 'POST':
-        url = Url.from_url(request.form['url'])
+        url = Url(url=request.form['url'])
         return render_template('add_url.html', added=url.insert(), url=url)
     else:
-        return render_template('add_url.html', added=False)
+        return render_template('add_url.html', added=None)

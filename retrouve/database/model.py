@@ -12,5 +12,6 @@ class Model(object):
     db = get_database_connection()
 
     def __init__(self, **kwargs):
-        self.id = None
         self.__dict__ = kwargs
+        if not hasattr(self, 'id'):
+            self.id = None
