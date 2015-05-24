@@ -34,9 +34,9 @@ create table urls (
 create table documents (
     id BIGSERIAL PRIMARY KEY,
 
-    language TEXT NOT NULL DEFAULT 'english',
+    language regconfig NOT NULL DEFAULT 'english'::regconfig,
 
-	url_id BIGINT NOT NULL REFERENCES urls (id) ON DELETE CASCADE,
+	  url_id BIGINT NOT NULL REFERENCES urls (id) ON DELETE CASCADE,
 
     status_code SMALLINT NOT NULL,
     headers JSON NOT NULL,
@@ -50,11 +50,11 @@ create table excerpts (
     id BIGSERIAL PRIMARY KEY,
 
     document_id BIGINT NOT NULL REFERENCES documents (id)  ON DELETE CASCADE,
-    language TEXT NOT NULL DEFAULT 'english',
+    language regconfig NOT NULL DEFAULT 'english'::regconfig,
 
-	tag TEXT NOT NULL DEFAULT 'p',
-	importance SMALLINT NOT NULL DEFAULT 0,
-	body TEXT NOT NULL,
+    tag TEXT NOT NULL DEFAULT 'p',
+    importance SMALLINT NOT NULL DEFAULT 0,
+    body TEXT NOT NULL,
 
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -71,7 +71,3 @@ create table images (
     
     created_at TIMESTAMP DEFAULT NOW()
 );
-
-create table testing (
-    id BIGSERIAL PRIMARY KEY
-) TABLESPACE scratch;

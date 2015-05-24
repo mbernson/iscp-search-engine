@@ -12,8 +12,6 @@ CREATE TRIGGER documents_on_update_current_timestamp BEFORE UPDATE
     set_updated_at_column();
 
 
-
-
 CREATE OR REPLACE FUNCTION insert_job_after_url_insert()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -21,6 +19,7 @@ BEGIN
    RETURN NEW;
 END;
 $$ language 'plpgsql';
+
 
 CREATE TRIGGER insert_job_after_url_insert AFTER INSERT
     ON urls FOR EACH ROW EXECUTE PROCEDURE
