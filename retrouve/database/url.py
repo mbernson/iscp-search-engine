@@ -34,19 +34,6 @@ class Url(Model):
         else:
             return self.parts
 
-    @staticmethod
-    def insert_many(urls):
-        cursor = db.cursor()
-        for url in urls:
-            try:
-                url.insert_bare(cursor)
-                db.commit()
-                print("Saved url %s" % url.geturl())
-            except psycopg2.Error as e:
-                print(e)
-                db.rollback()
-        cursor.close()
-
     def insert(self):
         cursor = self.db.cursor()
         try:

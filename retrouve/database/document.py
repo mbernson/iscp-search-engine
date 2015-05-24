@@ -5,6 +5,11 @@ from bs4 import BeautifulSoup
 from retrouve.config import allowed_domains
 import json
 
+
+def is_allowed(url):
+    return url.parts.netloc in allowed_domains or url.parts.netloc == ''
+
+
 class Document(Model):
     def __init__(self, **kwargs):
         defaults = {
@@ -44,11 +49,12 @@ class Document(Model):
         cursor = self.db.cursor()
         for link in self.soup.find_all('a'):
             url = Url(url=link.get('href'), base=self.url)
-
-            if url.parts.netloc in allowed_domains or url.parts.netloc == '':
+            if is_allowed(url):
+                url.insert_bare(cursor)
                 urls.append(url)
+                print(url.geturl())
 
-        Url.insert_many(urls)
+        print("Discovered %d new URL's" % len(urls))
 
         self.db.commit()
         cursor.close()
