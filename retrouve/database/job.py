@@ -14,11 +14,9 @@ class Job(Model):
     def insert(self):
         cursor = self.db.cursor()
         try:
-            dict = self.__dict__.copy()
-            dict['payload'] = json.dumps(self.payload)
             cursor.execute(
                 "INSERT INTO jobs (queue, payload, available_at) VALUES (%(queue)s, %(payload)s, %(available_at)s)",
-                dict)
+                self.serialize())
             self.db.commit()
             cursor.close()
             return cursor.rowcount == 1
@@ -28,6 +26,11 @@ class Job(Model):
             print(e)
         return False
 
+    def serialize(self):
+        attrs = self.__dict__.copy()
+        attrs['payload'] = json.dumps(self.payload)
+        return attrs
+
     def insert_bare(self, cursor):
         cursor.execute(
             "INSERT INTO jobs (queue, payload, available_at) VALUES (%(queue)s, %(payload)s, %(available_at)s) RETURNING id",
@@ -36,20 +39,26 @@ class Job(Model):
 
 
 class Jobs(Model):
+    def __pick_job(self, cursor, queue):
+        cursor.execute("SELECT * FROM jobs WHERE "
+                       "reserved = 'f' AND available_at <= NOW() AND queue = %s AND attempts <= 3 "
+                       "ORDER BY id ASC FOR UPDATE LIMIT 1",
+                       (queue,))
+        attrs = cursor.fetchone()
+        if attrs is None:
+            raise Exception("No available jobs found. Moving on.")
+        job = Job()
+        job.__dict__ = attrs
+        return job
+
+    def __reserve_job(self, cursor, job):
+        cursor.execute("UPDATE jobs SET reserved = 't', reserved_at = NOW() WHERE id = %s", (job.id,))
+
     def take_job_from_database(self, queue):
         cursor = self.db.cursor()
         try:
-            cursor.execute(
-                "SELECT * FROM jobs WHERE "
-                "reserved = 'f' AND available_at <= NOW() AND queue = %s AND attempts <= 3 "
-                "ORDER BY id ASC FOR UPDATE LIMIT 1",
-                (queue,))
-            attrs = cursor.fetchone()
-            if attrs is None:
-                raise Exception("No available jobs found. Moving on.")
-            job = Job()
-            job.__dict__ = attrs
-            cursor.execute("UPDATE jobs SET reserved = 't', reserved_at = NOW() WHERE id = %s", (job.id,))
+            job = self.__pick_job(cursor, queue)
+            self.__reserve_job(cursor, job)
             self.db.commit()
             cursor.close()
             print("reserving job with id %s" % job.id)

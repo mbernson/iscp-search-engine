@@ -26,7 +26,7 @@ class Spider(Worker):
 
             url = Url.find(job.payload['url_id'])
 
-            if not self.can_crawl_url(url):
+            if not url or not self.can_crawl_url(url):
                 self.jobs.clear_job(job)
                 return False
 

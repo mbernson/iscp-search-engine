@@ -15,9 +15,9 @@ class Document(Model):
         }
         args = merge_dicts(defaults, kwargs)
         super().__init__(**args)
-        self.parse()
+        self.parse_html()
 
-    def parse(self):
+    def parse_html(self):
         if not self.can_index:
             return
 
@@ -50,7 +50,7 @@ class Document(Model):
             if url.parts.netloc in allowed_domains or url.parts.netloc == '':
                 urls.append(url)
 
-        Url.insertmany(urls)
+        Url.insert_many(urls)
 
         self.db.commit()
         cursor.close()

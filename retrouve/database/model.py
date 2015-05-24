@@ -15,3 +15,6 @@ class Model(object):
         self.__dict__ = kwargs
         if not hasattr(self, 'id'):
             self.id = None
+
+    def serialize(self):
+        return self.__dict__.copy()

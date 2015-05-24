@@ -6,13 +6,12 @@ db = get_database_connection()
 
 
 class Url(Model):
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         if hasattr(self, 'url'):
-            self.parse()
+            self.parse_url()
 
-    def parse(self):
+    def parse_url(self):
         self.parts = urlparse(self.url)
         if hasattr(self, 'base'):
             if isinstance(self.base, str):
@@ -36,7 +35,7 @@ class Url(Model):
             return self.parts
 
     @staticmethod
-    def insertmany(urls):
+    def insert_many(urls):
         cursor = db.cursor()
         for url in urls:
             try:
@@ -91,7 +90,7 @@ class Url(Model):
 
         url = Url()
         url.__dict__ = result
-        url.parse()
+        url.parse_url()
 
         return url
 
