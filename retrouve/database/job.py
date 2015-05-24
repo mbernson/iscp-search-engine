@@ -47,8 +47,7 @@ class Jobs(Model):
         attrs = cursor.fetchone()
         if attrs is None:
             raise Exception("No available jobs found.")
-        job = Job()
-        job.__dict__ = attrs
+        job = Job(**attrs)
         return job
 
     def __reserve_job(self, cursor, job):

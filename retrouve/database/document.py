@@ -34,11 +34,8 @@ class Document(Model):
 
     def insert(self):
         cursor = self.db.cursor()
-        attrs = self.__dict__.copy()
-        attrs['url_id'] = self.url.id
-        attrs['headers'] = json.dumps(dict(self.headers))
         cursor.execute("INSERT INTO documents (language, url_id, status_code, headers, title, body) VALUES "
-                       "(%(language)s, %(url_id)s, %(status_code)s, %(headers)s, %(title)s, %(body)s) RETURNING id", attrs)
+                       "(%(language)s, %(url_id)s, %(status_code)s, %(headers)s, %(title)s, %(body)s) RETURNING id", self.serialize())
         self.db.commit()
         self.id = cursor.fetchone()['id']
         cursor.close()
@@ -54,7 +51,8 @@ class Document(Model):
                 urls.append(url)
                 print(url.geturl())
 
-        print("Discovered %d new URL's" % len(urls))
+        if cursor.rowcount >= 0:
+            print("Discovered %d new URL's" % cursor.rowcount)
 
         self.db.commit()
         cursor.close()
@@ -67,6 +65,12 @@ class Document(Model):
         cursor.execute("DELETE FROM documents WHERE url_id = %s", (url.id,))
         self.db.commit()
         cursor.close()
+
+    def serialize(self):
+        attrs = self.__dict__.copy()
+        attrs['url_id'] = self.url.id
+        attrs['headers'] = json.dumps(dict(self.headers))
+        return attrs
 
     @staticmethod
     def from_response(response, url):

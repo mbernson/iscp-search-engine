@@ -74,9 +74,7 @@ class Url(Model):
         if result is None:
             return None
 
-        url = Url()
-        url.__dict__ = result
-        url.parse_url()
+        url = Url(**result)
 
         return url
 
