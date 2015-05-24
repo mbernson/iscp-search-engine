@@ -46,7 +46,7 @@ class Jobs(Model):
                        (queue,))
         attrs = cursor.fetchone()
         if attrs is None:
-            raise Exception("No available jobs found. Moving on.")
+            raise Exception("No available jobs found.")
         job = Job()
         job.__dict__ = attrs
         return job
@@ -61,7 +61,6 @@ class Jobs(Model):
             self.__reserve_job(cursor, job)
             self.db.commit()
             cursor.close()
-            print("reserving job with id %s" % job.id)
             return job
         except Exception as e:
             print(e)
@@ -75,7 +74,6 @@ class Jobs(Model):
             cursor.execute("DELETE FROM jobs WHERE id = %s", (job.id,))
             self.db.commit()
             cursor.close()
-            print("clearing job with id %s" % job.id)
             return cursor.rowcount == 1
         except psycopg2.Error as e:
             print(e)
@@ -88,7 +86,6 @@ class Jobs(Model):
         try:
             cursor.execute("UPDATE jobs SET reserved = 'f', attempts = attempts + 1 WHERE id = %s", (job.id,))
             self.db.commit()
-            print("releasing job with id %s" % job.id)
             return cursor.rowcount == 1
         except psycopg2.Error as e:
             print(e)
@@ -101,7 +98,6 @@ class Jobs(Model):
         try:
             cursor.execute("UPDATE jobs SET reserved = 'f', reserved_at = null, available_at = %s WHERE id = %s", (crawl_at, job.id,))
             self.db.commit()
-            print("rescheduling job with id %s" % job.id)
             return cursor.rowcount == 1
         except psycopg2.Error as e:
             print(e)

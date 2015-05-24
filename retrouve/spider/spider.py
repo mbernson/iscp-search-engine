@@ -30,16 +30,13 @@ class Spider(Worker):
                 self.jobs.clear_job(job)
                 return False
 
-            print("Downloading URL '%s'" % url)
             response = self.fetch(url)
-            print("Got response code %s" % response.status_code)
 
             doc = Document.from_response(response, url)
             doc.purge_docs_for_url(url)
             doc.insert()
 
             if doc.can_index:
-                print("Indexing...")
                 doc.add_urls_to_index()
                 doc.create_excerpts()
 
@@ -53,14 +50,12 @@ class Spider(Worker):
 
     def can_crawl_url(self, url):
         if url.blacklisted:
-            print("Clearing url %s from the job queue because it is blacklisted" % url.id)
             return False
 
         scheme = url.parts.scheme
         if scheme in ('http', 'https'):
             return True
 
-        print("Clearing url %s from the job queue because I don't understand the scheme '%s'" % (url.id, scheme))
         return False
 
     def fetch(self, url):

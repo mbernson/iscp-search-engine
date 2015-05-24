@@ -7,7 +7,6 @@ sys.path.append('.')
 
 from retrouve.spider.spider import Spider
 
-print("Spider starting")
 spider = Spider()
 
 while True:

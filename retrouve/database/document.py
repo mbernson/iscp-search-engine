@@ -40,8 +40,6 @@ class Document(Model):
         return self.id
 
     def add_urls_to_index(self):
-        print("Detecting new URLs")
-
         urls = []
         cursor = self.db.cursor()
         for link in self.soup.find_all('a'):
@@ -54,7 +52,6 @@ class Document(Model):
 
         self.db.commit()
         cursor.close()
-        print("Inserted %d new URLs" % len(urls))
 
     def create_excerpts(self):
         pass
@@ -63,13 +60,11 @@ class Document(Model):
         cursor = self.db.cursor()
         cursor.execute("DELETE FROM documents WHERE url_id = %s", (url.id,))
         self.db.commit()
-        print("Purged %d old documents for url %d" % (cursor.rowcount, url.id))
         cursor.close()
 
     @staticmethod
     def from_response(response, url):
         if 'text/html' in response.headers['content-type']:
-            print("Found text/html content")
             doc = Document(url=url, status_code=response.status_code, headers=response.headers, body=response.text, can_index=True)
         else:
             doc = Document(url=url, status_code=response.status_code, headers=response.headers)

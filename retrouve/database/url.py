@@ -53,7 +53,6 @@ class Url(Model):
             self.insert_bare(cursor)
             self.db.commit()
             cursor.close()
-            print("Saved url for domain %s" % self.parts.netloc)
             return cursor.rowcount == 1
         except psycopg2.Error as e:
             print(e)
