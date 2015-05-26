@@ -15,9 +15,27 @@ body.slim {
     list-style: none;
 }
 
+body > h1 a, header > h1 a {
+    text-decoration: none;
+    color: black;
+}
+
+form input, form button {
+    font-size: 140%;
+}
+
 .result h1 {
     font-size: 120%;
 }
+.result h1 a {
+    color: black;
+}
 .result h2 {
     font-size: 90%;
+}
+
+.result {
+    margin: 1em;
+    border-bottom: 1px solid gray;
+
 }

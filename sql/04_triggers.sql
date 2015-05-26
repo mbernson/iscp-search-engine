@@ -16,7 +16,7 @@ CREATE or replace FUNCTION insert_job_after_url_insert() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-   INSERT INTO jobs (queue, payload) VALUES ('spider', ('{"url_id": ' || NEW.id || '}')::json);
+   INSERT INTO jobs (queue, payload, available_at) VALUES ('spider', ('{"url_id": ' || NEW.id || '}')::json, NEW.crawl_at);
    RETURN NEW;
 END;
 $$;

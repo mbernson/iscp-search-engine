@@ -5,6 +5,8 @@ from retrouve.database.query import Query
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 
+def noop():
+    pass
 
 @app.route("/")
 def search():

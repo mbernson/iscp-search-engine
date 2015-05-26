@@ -6,4 +6,9 @@ allowed_domains = [
     'metmathijs.nl',
     'samenvatten.metmathijs.nl',
     'koken.metmathijs.nl',
+
+    'hsleiden.nl',
+    'hsleiden.eu',
+    'jaceksmit.nl',
+    'wesselstam.nl',
 ]

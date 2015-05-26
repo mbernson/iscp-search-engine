@@ -8,10 +8,10 @@
 <body>
 
 <header>
-    <h1>ISCP search engine</h1>
+    <h1><a href="/">ISCP search engine</a></h1>
 
     <form action="/search">
-        <input type="text" name="q"/>
+        <input type="text" name="q" value="{{ query }}"/>
         <input type="submit" value="Search"/>
     </form>
 </header>
@@ -21,9 +21,9 @@
         <div class="result">
             <h1><a href="{{ result.url }}">{{ result.title }}</a></h1>
 
-            <h2><a href="{{ result.url }}">{{ result.url }}</a></h2>
+            <p>{{ result.excerpt|safe }}</p>
 
-            <p>{{ result.excerpt }}</p>
+            <p><a href="{{ result.url }}">{{ result.url }}</a></p>
         </div>
     {% endfor %}
 </div>
