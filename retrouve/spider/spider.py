@@ -1,5 +1,5 @@
 from retrouve.database.document import Document
-from retrouve.database.job import Jobs, Job
+from retrouve.database.job import JobRepository, Job
 from retrouve.database.url import Url
 from retrouve.worker import Worker
 import requests
@@ -16,11 +16,11 @@ class Spider(Worker):
     }
 
     def __init__(self):
-        self.jobs = Jobs()
+        self.jobs = JobRepository()
 
     def work(self):
         try:
-            job = self.jobs.take_job_from_database(self.queue)
+            job = self.jobs.reserve_job(self.queue)
             if job is False:
                 return False
 

@@ -38,7 +38,7 @@ class Job(Model):
         self.id = cursor.fetchone()['id']
 
 
-class Jobs(Model):
+class JobRepository(Model):
     def __pick_job(self, cursor, queue):
         cursor.execute("SELECT * FROM jobs WHERE "
                        "reserved = 'f' AND available_at <= NOW() AND queue = %s AND attempts <= 3 "
@@ -53,7 +53,7 @@ class Jobs(Model):
     def __reserve_job(self, cursor, job):
         cursor.execute("UPDATE jobs SET reserved = 't', reserved_at = NOW() WHERE id = %s", (job.id,))
 
-    def take_job_from_database(self, queue):
+    def reserve_job(self, queue):
         cursor = self.db.cursor()
         try:
             job = self.__pick_job(cursor, queue)

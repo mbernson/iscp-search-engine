@@ -10,6 +10,10 @@ import json
 
 class Document(Model):
     def __init__(self, **kwargs):
+        """
+        Initialize the document with default parameters.
+        :param kwargs:
+        """
         defaults = {
             'title': '',
             'body': '',
