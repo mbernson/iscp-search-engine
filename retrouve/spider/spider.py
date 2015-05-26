@@ -39,6 +39,7 @@ class Spider(Worker):
             if doc.can_index:
                 doc.add_urls_to_index()
                 doc.create_excerpts()
+                doc.save_images()
 
             # Schedule the job to be repeated after some period of time
             recrawl_at = datetime.now() + self.repeat_delta

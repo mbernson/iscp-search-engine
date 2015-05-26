@@ -18,3 +18,10 @@ class Model(object):
 
     def serialize(self):
         return self.__dict__.copy()
+
+    def isnew(self):
+        return not self.exists()
+
+    def exists(self):
+        return hasattr(self, 'id') and self.id is not None
+

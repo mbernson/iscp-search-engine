@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from retrouve.database.job import Job
 from retrouve.database.url import Url
+from retrouve.database.query import Query
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 
@@ -12,14 +13,8 @@ def search():
 
 @app.route("/search")
 def results():
-    query = request.args.get('q', '')
-    result = {
-        'title': 'A quick brown fox',
-        'url': 'http://example.com/',
-        'excerpt': 'The quick brown fox <mark>jumped</mark> over the lazy dog. [...]'
-    }
-    results = [result, result, result, result, result, result, result]
-    return render_template('results.html', query=query, results=results)
+    query = Query(request.args.get('q', ''))
+    return render_template('results.html', query=query.getquery(), results=query.results())
 
 
 @app.route("/add_url", methods=['POST', 'GET'])

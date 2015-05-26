@@ -34,7 +34,7 @@ class Job(Model):
     def insert_bare(self, cursor):
         cursor.execute(
             "INSERT INTO jobs (queue, payload, available_at) VALUES (%(queue)s, %(payload)s, %(available_at)s) RETURNING id",
-            self.__dict__)
+            self.self.serialize())
         self.id = cursor.fetchone()['id']
 
 

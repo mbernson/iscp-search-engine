@@ -14,3 +14,10 @@ body.slim {
 .search ul {
     list-style: none;
 }
+
+.result h1 {
+    font-size: 120%;
+}
+.result h2 {
+    font-size: 90%;
+}
