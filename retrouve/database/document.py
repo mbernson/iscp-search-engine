@@ -4,12 +4,8 @@ from retrouve.database.excerpt import Excerpt
 from retrouve.database.image import Image
 from retrouve.util import merge_dicts
 from bs4 import BeautifulSoup
-from retrouve.config import allowed_domains
+from retrouve.config import get_allowed_domains
 import json
-
-
-def is_allowed(url):
-    return url.parts.netloc in allowed_domains or url.parts.netloc == ''
 
 
 class Document(Model):
@@ -46,6 +42,11 @@ class Document(Model):
         return self.id
 
     def add_urls_to_index(self):
+        allowed_domains = get_allowed_domains()
+
+        def is_allowed(u):
+            return u.parts.netloc in allowed_domains or u.parts.netloc == ''
+
         urls = []
         cursor = self.db.cursor()
         for link in self.soup.find_all('a'):
