@@ -25,6 +25,7 @@ create table urls (
     query TEXT,
     fragment TEXT,
     port SMALLINT DEFAULT 80,
+    blacklisted boolean default 'f',
 
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     
