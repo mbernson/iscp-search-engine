@@ -1,4 +1,3 @@
-
 CREATE OR REPLACE FUNCTION set_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -7,8 +6,9 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
+
 CREATE TRIGGER documents_on_update_current_timestamp BEFORE UPDATE
-    ON document FOR EACH ROW EXECUTE PROCEDURE
+    ON documents FOR EACH ROW EXECUTE PROCEDURE
     set_updated_at_column();
 
 

@@ -1,4 +1,4 @@
-CREATE TABLESPACE scratch LOCATION '/mnt/usb_scratch/postgresql/data';
+-- CREATE TABLESPACE scratch LOCATION '/mnt/usb_scratch/postgresql/data';
 
 create table jobs (
     id BIGSERIAL PRIMARY KEY,
@@ -9,6 +9,7 @@ create table jobs (
     reserved BOOLEAN DEFAULT 'f' NOT NULL,
     reserved_at TIMESTAMP DEFAULT NULL,
     available_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    attempts integer DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -43,7 +44,8 @@ create table documents (
     title TEXT NOT NULL,
     body TEXT NOT NULL,
 
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at timestamp without time zone DEFAULT now() NOT NULL
 );
 
 create table excerpts (
