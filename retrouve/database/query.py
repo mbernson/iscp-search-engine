@@ -12,13 +12,14 @@ class Query(Model):
         try:
             cursor = self.db.cursor()
             cursor.execute("SELECT url, domain, title, "
-                           "ts_headline(excerpts.language, excerpts.body, to_tsquery(%(query)s), 'StartSel=<mark>, StopSel=</mark>') as excerpt, "
+                           "ts_headline(excerpts.language, excerpts.body, plainto_tsquery(%(query)s), 'StartSel=<mark>, StopSel=</mark>') as excerpt, "
+                           "ts_rank_cd(to_tsvector(excerpts.language, excerpts.body), plainto_tsquery(%(query)s)) AS rank, "
                            "excerpts.language as language "
                            "FROM excerpts JOIN documents ON documents.id = excerpts.document_id "
                            "JOIN urls ON urls.id = documents.url_id "
-                           "WHERE excerpts.body @@ to_tsquery(%(query)s) "
+                           "WHERE excerpts.body @@ plainto_tsquery(%(query)s) "
                            "AND excerpts.body != '' "
-                           "ORDER BY excerpts.created_at DESC "
+                           "ORDER BY rank DESC, excerpts.created_at DESC "
                            "LIMIT 30", {'query': self.getquery()})
             results = cursor.fetchall()
             self.db.commit()
