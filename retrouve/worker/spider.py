@@ -3,18 +3,41 @@ from retrouve.database.url import Url
 from retrouve.worker.worker import Worker
 import requests
 from datetime import datetime, timedelta
-import urllib.robotparser
+
+
+def can_crawl_url(url):
+    """
+    Determine whether we are allowed to crawl a certain URL.
+    :param url:
+    :return boolean:
+    """
+    if url.blacklisted:
+        return False
+
+    scheme = url.parts.scheme
+    if scheme in ('http', 'https'):
+        return True
+
+    return False
 
 
 class Spider(Worker):
+    """
+    Fetches webpages from the 'spider' queue, and stores a representation
+    for our search engine in the database.
+    """
+
     queue = 'spider'
     repeat_delta = timedelta(days=7)
-    robot = urllib.robotparser.RobotFileParser()
     headers = {
         'user-agent': 'PyBot/1.0'
     }
 
     def work(self):
+        """
+        :inheritdoc:
+        :return: :raise e:
+        """
         try:
             job = self.jobs.reserve_job(self.queue)
             if job is False:
@@ -22,7 +45,7 @@ class Spider(Worker):
 
             url = Url.find(job.payload['url_id'])
 
-            if not url or not self.can_crawl_url(url):
+            if not url or not can_crawl_url(url):
                 self.jobs.clear_job(job)
                 return False
 
@@ -33,9 +56,9 @@ class Spider(Worker):
             doc.insert()
 
             if doc.can_index:
-                doc.add_urls_to_index()
-                doc.create_excerpts()
-                doc.save_images()
+                doc.discover_urls()
+                doc.discover_excerpts()
+                doc.discover_images()
 
             # Schedule the job to be repeated after some period of time
             recrawl_at = datetime.now() + self.repeat_delta
@@ -45,17 +68,12 @@ class Spider(Worker):
             self.jobs.release_job(job)
             raise e
 
-    def can_crawl_url(self, url):
-        if url.blacklisted:
-            return False
-
-        scheme = url.parts.scheme
-        if scheme in ('http', 'https'):
-            return True
-
-        return False
-
     def fetch(self, url):
+        """
+        Download a URL over the network.
+        :param url:
+        :return: response || :raise Exception:
+        """
         try:
             return requests.get(url.geturl(), headers=self.headers)
         except requests.exceptions.ConnectionError as e:
