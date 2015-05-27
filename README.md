@@ -72,6 +72,13 @@ The spider (worker):
 
 ## Set up for development
 
+Clone the project:
+
+```
+$ git clone git@git.syntaxleiden.nl:mathijs/search_engine.git
+cd search_engine
+```
+
 Set up a database:
 
 ```
@@ -85,7 +92,7 @@ Create a Python virtual environment:
 
 ```
 $ [sudo] pip install virtualenv
-$ virtualenv venv
+$ virtualenv -p python3 venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
 ```
@@ -94,7 +101,7 @@ Run one or more processes:
 
 ```
 $ bin/web # Start the web front end
-$ bin/spider # Start a spider process
+$ bin/spider # Start a single spider process
 ```
 
 That should be it! The front end can be found at [http://localhost:5000], and this is where you can submit the first URL's to.
