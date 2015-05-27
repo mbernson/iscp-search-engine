@@ -38,15 +38,15 @@ create table documents (
 
     language regconfig NOT NULL DEFAULT 'english'::regconfig,
 
-	  url_id BIGINT NOT NULL REFERENCES urls (id) ON DELETE CASCADE,
+    url_id BIGINT NOT NULL REFERENCES urls (id) ON DELETE CASCADE,
 
     status_code SMALLINT NOT NULL,
     headers JSON NOT NULL,
     title TEXT NOT NULL,
     body TEXT NOT NULL,
+    body_plain TEXT NOT NULL,
 
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at timestamp without time zone DEFAULT now() NOT NULL
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 create table excerpts (
@@ -57,12 +57,12 @@ create table excerpts (
 
     tag TEXT NOT NULL DEFAULT 'p',
     importance SMALLINT NOT NULL DEFAULT 0,
-    body TEXT NOT NULL,
+    body tsvector NOT NULL,
 
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX excerpts_body_fulltext_index ON excerpts USING gin(to_tsvector(language, body));
+CREATE INDEX excerpts_body_fulltext_index ON excerpts USING gin(body);
 
 create table images (
     id BIGSERIAL PRIMARY KEY,

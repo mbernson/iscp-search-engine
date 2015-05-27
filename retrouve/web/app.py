@@ -16,7 +16,7 @@ def search():
 @app.route("/search")
 def results():
     query = Query(request.args.get('q', ''))
-    return render_template('results.html', query=query.getquery(), results=query.results())
+    return render_template('results.html', query=query.getquery(), results=query.results(), elapsed_time=query.elapsed_time)
 
 
 @app.route("/add_url", methods=['POST', 'GET'])

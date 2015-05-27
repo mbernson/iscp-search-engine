@@ -17,6 +17,7 @@ class Document(Model):
         defaults = {
             'title': '',
             'body': '',
+            'body_plain': '',
             'language': 'dutch',
             # can_index prevents a document from being indexed if it's not HTML
             'can_index': False
@@ -30,6 +31,7 @@ class Document(Model):
             return
 
         self.soup = BeautifulSoup(self.body)
+        self.body_plain = self.soup.get_text()
         try:
             self.title = self.soup.title.string
         except AttributeError:
@@ -37,8 +39,8 @@ class Document(Model):
 
     def insert(self):
         cursor = self.db.cursor()
-        cursor.execute("INSERT INTO documents (language, url_id, status_code, headers, title, body) VALUES "
-                       "(%(language)s, %(url_id)s, %(status_code)s, %(headers)s, %(title)s, %(body)s) RETURNING id", self.serialize())
+        cursor.execute("INSERT INTO documents (language, url_id, status_code, headers, title, body, body_plain) VALUES "
+                       "(%(language)s, %(url_id)s, %(status_code)s, %(headers)s, %(title)s, %(body)s, %(body_plain)s) RETURNING id", self.serialize())
         self.db.commit()
         self.id = cursor.fetchone()['id']
         cursor.close()

@@ -1,7 +1,6 @@
 from retrouve.database.document import Document
-from retrouve.database.job import JobRepository, Job
 from retrouve.database.url import Url
-from retrouve.worker import Worker
+from retrouve.worker.worker import Worker
 import requests
 from datetime import datetime, timedelta
 import urllib.robotparser
@@ -14,9 +13,6 @@ class Spider(Worker):
     headers = {
         'user-agent': 'PyBot/1.0'
     }
-
-    def __init__(self):
-        self.jobs = JobRepository()
 
     def work(self):
         try:

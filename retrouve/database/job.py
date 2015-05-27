@@ -1,4 +1,3 @@
-from datetime import datetime
 from retrouve.database.model import Model
 import psycopg2
 from datetime import datetime

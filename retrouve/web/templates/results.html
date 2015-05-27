@@ -11,12 +11,16 @@
     <h1><a href="/">ISCP search engine</a></h1>
 
     <form action="/search">
-        <input type="text" name="q" value="{{ query }}"/>
-        <input type="submit" value="Search"/>
+        <input type="text" name="q" value="{{ query }}" />
+        <input type="submit" value="Search" />
     </form>
 </header>
 
 <div class="results">
+    {% if elapsed_time %}
+        <p>Fetched {{ results | length }} results in {{ elapsed_time }} seconds</p>
+    {% endif %}
+
     {% for result in results %}
         <div class="result">
             <h1><a href="{{ result.url }}">{{ result.title }}</a></h1>
@@ -30,8 +34,8 @@
 
 <nav>
     <ul>
-        <li><a href="/">Back home</a></li>
-        <li><a href="/add_url">Submit a URL</a></li>
+{#        <li><a href="/">Next page</a></li>#}
+{#        <li><a href="/">Previous page</a></li>#}
     </ul>
 </nav>
 

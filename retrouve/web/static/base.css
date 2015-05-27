@@ -20,8 +20,12 @@ body > h1 a, header > h1 a {
     color: black;
 }
 
-form input, form button {
+form input[type=text] {
     font-size: 140%;
+    width: 24ex;
+}
+form input[type=submit] {
+    height: 2em;
 }
 
 .result h1 {
@@ -37,5 +41,4 @@ form input, form button {
 .result {
     margin: 1em;
     border-bottom: 1px solid gray;
-
 }
