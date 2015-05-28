@@ -6,35 +6,52 @@ db = get_database_connection()
 
 
 class Url(Model):
+    """
+    Represents a URL as it is stored in the database.
+    """
+
     def __init__(self, **kwargs):
+        """
+        Construct the URL, and parse the URL into parts right away.
+        :param kwargs:
+        """
         super().__init__(**kwargs)
         if hasattr(self, 'url'):
             self.parse_url()
 
     def parse_url(self):
-        self.parts = urlparse(self.url)
+        """
+        Parse the URL into its components, using a base URL when possible.
+        The URL components are stored in the internal __parts property.
+        """
+        self.__parts = urlparse(self.url)
         if hasattr(self, 'base'):
             if isinstance(self.base, str):
                 self.base = urlparse(self.base)
             elif isinstance(self.base, Url):
-                self.base = self.base.parts
+                self.base = self.base.__parts
 
     def geturl(self):
-        if not hasattr(self, 'base'):
-            return self.parts.geturl()
-        else:
-            return urlunparse(self.merge_with_base())
+        """
+        Get the fully-qualified URL for this URL object.
+        :return: string
+        """
+        return urlunparse(self.getparts())
 
-    def merge_with_base(self):
+    def getparts(self):
         if hasattr(self, 'base'):
-            p = self.parts
+            p = self.__parts
             b = self.base
             # Please, let there be a better way to do this
             return p.scheme or b.scheme, p.netloc or b.netloc, p.path or b.path, p.params or b.params, p.query or b.query, p.fragment or b.fragment
         else:
-            return self.parts
+            return self.__parts
 
     def insert(self):
+        """
+        Persist the URL to the database as a new row.
+        :return:
+        """
         cursor = self.db.cursor()
         try:
             self.insert_bare(cursor)
@@ -49,7 +66,7 @@ class Url(Model):
 
     def insert_bare(self, cursor):
         url = self.geturl()
-        parts = self.merge_with_base()
+        parts = self.getparts()
 
         # Ensure this URL doesn't exist yet
         cursor.execute("SELECT id FROM urls WHERE scheme = %s AND domain = %s AND path = %s AND params = %s AND query = %s LIMIT 1", parts[0:5])
@@ -80,7 +97,11 @@ class Url(Model):
         return url
 
     def destroy(self):
-        if self.id is None:
+        """
+        Remove this URL from the database.
+        :return: boolean
+        """
+        if self.is_new():
             return False
         cursor = self.db.cursor()
         try:
@@ -93,7 +114,11 @@ class Url(Model):
         return False
 
     def domain(self):
-        return self.parts.netloc
+        """
+        Return the domain name of this URL.
+        :return:
+        """
+        return self.__parts.netloc
 
     def __str__(self):
         return self.geturl()

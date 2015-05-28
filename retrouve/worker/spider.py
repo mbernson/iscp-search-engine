@@ -14,7 +14,7 @@ def can_crawl_url(url):
     if url.blacklisted:
         return False
 
-    scheme = url.parts.scheme
+    scheme = url.getparts().scheme
     if scheme in ('http', 'https'):
         return True
 
@@ -36,7 +36,6 @@ class Spider(Worker):
     def work(self):
         """
         :inheritdoc:
-        :return: :raise e:
         """
         try:
             job = self.jobs.reserve_job(self.queue)
