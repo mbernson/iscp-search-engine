@@ -1,8 +1,15 @@
 from retrouve.database.model import Model
 
-
 class Excerpt(Model):
+    """
+    Represents a snippet of text from a document, as it is stored in the database.
+    """
+
     def insert_bare(self, cursor):
+        """
+        Perform a SQL insert of this excerpt using a database cursor.
+        :param cursor: :class:`cursor` object
+        """
         if self.body is None or self.body == '':
             return False
 
