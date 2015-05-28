@@ -42,3 +42,15 @@ form input[type=submit] {
     margin: 1em;
     border-bottom: 1px solid gray;
 }
+
+.pagination {
+    text-align: center;
+}
+
+.pagination ul {
+    list-style: none;
+}
+.pagination ul li {
+    display: inline-block;
+    margin: 0 1em;
+}
