@@ -21,7 +21,7 @@ class Model(object):
     A model can easily be serialized to a dictionary and back.
     """
 
-    """Shared database connection"""
+    """Shared connection to the database"""
     db = get_database_connection()
 
     def __init__(self, **kwargs):
