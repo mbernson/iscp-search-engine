@@ -15,9 +15,20 @@ CREATE TRIGGER documents_on_update_current_timestamp BEFORE UPDATE
 CREATE or replace FUNCTION insert_job_after_url_insert() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
+DECLARE
+  crawl_at TIMESTAMP;
 BEGIN
-   INSERT INTO jobs (queue, payload, available_at) VALUES ('spider', ('{"url_id": ' || NEW.id || '}')::json, NEW.crawl_at);
-   RETURN NEW;
+  crawl_at := (select max(available_at) + interval '2 seconds' from jobs
+    where jobs.domain = NEW.domain and available_at < (now() + interval '6 days'));
+
+  IF crawl_at is null THEN
+    crawl_at := now() + interval '2 seconds';
+  END IF;
+
+  INSERT INTO jobs (queue, payload, domain, available_at) VALUES ('spider', ('{"url_id": ' || NEW.id || '}')::json,
+    NEW.domain, crawl_at
+  );
+  RETURN NEW;
 END;
 $$;
 

@@ -5,6 +5,7 @@ create table jobs (
     
     queue TEXT NOT NULL,
     payload JSON NOT NULL,
+    domain TEXT DEFAULT NULL,
         
     reserved BOOLEAN DEFAULT 'f' NOT NULL,
     reserved_at TIMESTAMP DEFAULT NULL,
