@@ -60,12 +60,19 @@ class Document(Model):
         """
         Discover URL's in the document and save them in the database.
         """
+        allowed_domains = get_allowed_domains()
+
+        def is_allowed(u):
+            return u.parts.netloc in allowed_domains or u.parts.netloc == ''
+
         urls = []
         cursor = self.db.cursor()
         for link in self.soup.find_all('a'):
             url = Url(url=link.get('href'), base=self.url)
-            url.insert_bare(cursor)
-            urls.append(url)
+            if is_allowed(url):
+                url.insert_bare(cursor)
+                urls.append(url)
+                print(url.geturl())
 
         self.db.commit()
         cursor.close()
