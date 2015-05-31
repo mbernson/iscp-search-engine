@@ -63,7 +63,7 @@ class Document(Model):
         allowed_domains = get_allowed_domains()
 
         def is_allowed(u):
-            return u.parts.netloc in allowed_domains or u.parts.netloc == ''
+            return u.domain() in allowed_domains or u.domain() == ''
 
         urls = []
         cursor = self.db.cursor()
@@ -72,7 +72,6 @@ class Document(Model):
             if is_allowed(url):
                 url.insert_bare(cursor)
                 urls.append(url)
-                print(url.geturl())
 
         self.db.commit()
         cursor.close()
