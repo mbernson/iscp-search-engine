@@ -18,7 +18,7 @@
 
 <div class="results">
     {% if elapsed_time %}
-        <p>Fetched {{ results | length }} results in {{ elapsed_time }} seconds</p>
+        <p>Fetched {{ results | length }} out of ~{{ count }} results in {{ '%0.4f' % elapsed_time }} seconds</p>
     {% endif %}
 
     {% for result in results %}
@@ -27,17 +27,21 @@
 
             <p>{{ result.excerpt|safe }}</p>
 
-            <p><a href="{{ result.url }}">{{ result.url }}</a></p>
+            <p><small><a href="{{ result.url }}">{{ result.url }}</a></small></p>
         </div>
     {% endfor %}
 </div>
 
+{% if not (results | length) < 50 and not count <= 50 %}
 <nav class="pagination">
     <ul>
-        <li><a href="#">&larr; Previous page</a></li>
-        <li><a href="#">Next page &rarr;</a></li>
+        {% if page > 0 %}
+        <li><a href="?q={{ query }}&page={{ page - 1 }}">&larr; Previous page</a></li>
+        {% endif %}
+        <li><a href="?q={{ query }}&page={{ page + 1 }}">Next page &rarr;</a></li>
     </ul>
 </nav>
+{% endif %}
 
 </body>
 </html>

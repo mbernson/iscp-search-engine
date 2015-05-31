@@ -12,8 +12,12 @@ def search():
 
 @app.route("/search")
 def results():
+    per_page = 50
     query = Query(request.args.get('q', ''))
-    return render_template('results.html', query=query.getquery(), results=query.results(), elapsed_time=query.elapsed_time)
+    page = int(request.args.get('page', 0))
+    offset = page * per_page
+    return render_template('results.html', query=query.getquery(), results=query.results(offset=offset),
+                           elapsed_time=query.elapsed_time, count=query.count(), page=page)
 
 
 @app.route("/add_url", methods=['POST', 'GET'])

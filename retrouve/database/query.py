@@ -20,27 +20,29 @@ class Query:
         """Return the search query"""
         return self.query
 
-    def results(self, amount=50):
+    def results(self, offset=0, amount=50):
         """
         Return results for the query.
         :return: list
         """
+        cursor = self.db.cursor()
         try:
             params = {
                 'query': self.getquery(),
+                'offset': offset,
                 'amount': amount
             }
             start_time = time()
-            cursor = self.db.cursor()
             cursor.execute("SELECT DISTINCT url, domain, title, "
                            "ts_headline(excerpts.language, documents.body_plain, plainto_tsquery(%(query)s), 'StartSel=<mark>, StopSel=</mark>') as excerpt, "
-                           "ts_rank_cd(excerpts.body, plainto_tsquery(%(query)s)) AS rank, "
-                           "excerpts.language as language "
-                           "FROM excerpts JOIN documents ON documents.id = excerpts.document_id "
-                           "JOIN urls ON urls.id = documents.url_id "
+                           "ts_rank_cd(excerpts.body, plainto_tsquery(%(query)s)) AS rank, excerpts.language as language "
+                           "FROM excerpts, documents, urls "
                            "WHERE excerpts.body @@ plainto_tsquery(%(query)s) "
+                           "AND documents.id = excerpts.document_id "
+                           "AND urls.id = documents.url_id "
                            "ORDER BY rank DESC "
-                           "LIMIT %(amount)s", params)
+                           "LIMIT %(amount)s "
+                           "OFFSET %(offset)s", params)
             results = cursor.fetchall()
             self.db.commit()
             self.elapsed_time = time() - start_time
@@ -51,3 +53,10 @@ class Query:
 
         cursor.close()
         return results
+
+    def count(self):
+        cursor = self.db.cursor()
+        cursor.execute("select count(*) amount from excerpts, documents WHERE excerpts.body @@ plainto_tsquery(%s) "
+                       "and documents.id = excerpts.document_id", (self.getquery(),))
+        result = cursor.fetchone()
+        return result['amount']
