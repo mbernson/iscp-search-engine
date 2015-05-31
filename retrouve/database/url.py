@@ -78,7 +78,6 @@ class Url(Model):
                        (url,) + parts)
         result = cursor.fetchone()
         self.id = result['id']
-        print("Saved new URL %s with id %s" % (url, self.id))
         return True
 
     @staticmethod

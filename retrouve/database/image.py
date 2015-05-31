@@ -1,4 +1,4 @@
-from retrouve.database.model import Model, get_database_connection
+from retrouve.database.model import Model
 
 
 class Image(Model):

@@ -45,7 +45,6 @@ class Query:
             self.db.commit()
             self.elapsed_time = time() - start_time
         except Exception as e:
-            print("Oh noes, postgres threw an error on us")
             print(e)
             self.db.rollback()
             results = []

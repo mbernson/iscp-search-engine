@@ -65,6 +65,7 @@ class Spider(Worker):
         except Exception as e:
             # Release the job back on to the queue if an error occurs
             self.jobs.release_job(job)
+            print("Releasing job %d because an exception occurred" % job.id)
             raise e
 
     def fetch(self, url):

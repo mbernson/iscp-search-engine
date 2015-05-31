@@ -1,12 +1,9 @@
 from flask import Flask, render_template, request
-from retrouve.database.job import Job
 from retrouve.database.url import Url
 from retrouve.database.query import Query
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 
-def noop():
-    pass
 
 @app.route("/")
 def search():

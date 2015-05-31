@@ -65,13 +65,16 @@ class Document(Model):
         def is_allowed(u):
             return u.domain() in allowed_domains or u.domain() == ''
 
-        urls = []
+        insert_count = 0
         cursor = self.db.cursor()
         for link in self.soup.find_all('a'):
             url = Url(url=link.get('href'), base=self.url)
             if is_allowed(url):
                 url.insert_bare(cursor)
-                urls.append(url)
+                insert_count += 1
+        
+        if insert_count > 0:
+            print("Discovered %d new URLs" % insert_count)
 
         self.db.commit()
         cursor.close()
