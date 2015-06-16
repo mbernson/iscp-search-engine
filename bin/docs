@@ -1,0 +1,2 @@
+pandoc README.md -o doc/Handleiding.pdf
+pandoc doc/Project\ zoekmachine.md -o doc/Projectomschrijving.pdf
