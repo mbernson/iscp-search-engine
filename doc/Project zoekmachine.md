@@ -61,7 +61,7 @@ De gebruikers van een zoekmachine willen vanzelfsprekend de meest relevante resu
 
 Het PageRank algoritme, uitgevonden door Google, is een manier om te bepalen hoe belangrijk webpagina's zijn. Het werkt door te kijken welke pagina's verwijzen naar andere pagina's.
 
-TODO: Naïeve versie van PageRank ontwerpen en implementeren.
+Het zou mooi zijn om een naïeve versie van PageRank te ontwerpen en implementeren, maar dit is niet verplicht voor dit project.
 
 ## Stemming
 
@@ -71,20 +71,22 @@ De zoekmachine kan dit principe toepassen om synoniemen voor de zoektermen te vi
 
 # Database
 
-In de eerste plaats zal PostgreSQL worden gebruikt als DBMS voor de zoekmachine. Postgres is een solide, feature-rijk DBMS, met goede eigenschappen qua schaalbaarheid. Aangezien dit project een onderzoek is, verwacht ik dat het ruim zal voldoen.
+In de eerste plaats zal PostgreSQL worden gebruikt als DBMS voor de zoekmachine.
+Postgres is een solide, feature-rijk DBMS, met goede eigenschappen qua schaalbaarheid.
+Aangezien dit project een onderzoek is, verwacht ik dat het ruim zal voldoen.
 
 # Andere systemen
 
-TODO: Vergelijken met de volgende systemen:
+Dit project is vergelijkbaar met de volgende systemen:
 
 * Lucene
 * Solr
 * Elasticsearch
 
-Of alternatieve databases onderzoeken:
+Voor de database bestaan de volgende NoSQL alternatieven (die eventueel onderzocht kunnen worden):
 
 * Hadoop
-* MongoDB?
+* MongoDB
 
 # Doelstellingen
 
@@ -92,16 +94,24 @@ Voor dit project zijn de volgende doelstellingen opgesteld. Indien hier aan vold
 
 ## Must-haves
 
-* Het kunnen indexeren van minstens twee domeinen, waarvan elk domein minstens 250 webpagina's telt.
-* Het bieden van een web-interface om te doorzoeken.
-* Het effectief kunnen doorzoeken van de geïndexeerde inhoud op basis van zoektermen. Hierbij moeten de meest relevante resultaten het eerste verschijnen.
-* Het hebben van een spider proces dat met vaste interval de websites opnieuw indexeert.
-* Het spider proces heeft *rate-limiting* zodat het de website eigenaren geen overmatig verkeer bezorgt.
+* Het indexeren van minstens twee domeinen, waarvan elk domein minstens 250 webpagina's telt.
+* Het bieden van een web-interface waarmee gebruikers kunnen zoeken.
+* Het effectief doorzoeken van de geïndexeerde inhoud op basis van zoektermen. Hierbij moeten de meest relevante resultaten als eerste verschijnen.
+* Een *spider* welke met vaste interval de websites opnieuw indexeert.
+* *Rate-limiting*, zodat de *spider* geen overmatig verkeer genereert voor website eigenaars.
 
 ## Should-haves
 
 * Het kunnen zoeken naar afbeeldingen op basis van de alt-tekst hiervan.
-* Het spider proces houdt rekening met `robots.txt` informatie die de site verstrekt.
+* De spider houdt rekening met `robots.txt` informatie die de site verstrekt.
+
+## Could-haves
+
+* Een naïeve versie van het PageRank-algoritme.
+
+## Won't-haves
+
+* Ondersteuning voor- en onderzoek naar alternatieve databases.
 
 # Hosting
 
