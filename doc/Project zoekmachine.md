@@ -2,7 +2,11 @@
 
 # Inleiding
 
-Dit project is een ontwerp en implementatie van een zoekmachine. Het doel is om meer te leren over databases (NoSQL en relationeel), hun eigenschappen voor "big data" opslag, Python, en zoekmachines.
+Dit project omvat een ontwerp en implementatie van een zoekmachine. De leerdoelen van het project zijn:
+
+1. Kennis op te doen over Python and PostgreSQL
+2. Te leren over het *crawlen* en indexeren van webpagina's
+3. Te leren hoe zoekmachines op een hoog niveau in elkaar zitten
 
 # Architectuur
 
@@ -149,4 +153,18 @@ De nadelen zijn dat de server niet makkelijk ingezet kan worden ivm geluidsprodu
 
 # Bronnen
 
+Voor dit document heb ik de volgende bronnen gebruikt:
+
 * https://en.wikipedia.org/wiki/Web_search_engine
+* Eigen kennis
+
+Gedurende het project heb ik gebruik gemaakt van:
+
+* Boek: Python pocket reference (ISBN 9781449357016)
+* Python 3 documentatie: https://docs.python.org/3/
+* PostgreSQL documentatie: http://www.postgresql.org/docs/9.4/static/index.html
+
+* Stack Overflow: http://stackoverflow.com/
+* Python PEP's waaronder:
+  * https://www.python.org/dev/peps/pep-0008/
+  * https://www.python.org/dev/peps/pep-0249/
